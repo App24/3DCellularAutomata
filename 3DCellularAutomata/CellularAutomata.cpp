@@ -63,6 +63,11 @@ void CellularAutomata::simulate()
 	for (size_t i = 0; i < threadCount; i++)
 	{
 		threads[i] = std::thread(&CellularAutomata::simulateThread, this, floor(height*(i/threadCount)), floor(height * ((i+1) / threadCount)));
+		
+	}
+
+	for (size_t i = 0; i < threadCount; i++)
+	{
 		threads[i].join();
 	}
 

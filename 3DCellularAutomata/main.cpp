@@ -91,9 +91,9 @@ int main() {
 	while (!Window::isShouldClose()) {
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
 
 		float currentTime = glfwGetTime();
 		delta = currentTime - lastTime;
@@ -144,131 +144,131 @@ int main() {
 			}
 		}
 
-		if (time >= 1/(float)simulationSpeed || (unlocked && !paused)) {
+		if (time >= 1 / (float)simulationSpeed || (unlocked && !paused)) {
 			automata->simulate();
 			mesh = renderer->render(automata);
 			time = 0;
 		}
 
-		if (ImGui::Begin("Color")) {
-			for (size_t i = 0; i < rules.states*3; i+=3)
-			{
-				if (ImGui::CollapsingHeader(("State: " + std::to_string(i/3)).c_str())) {
-					float colors[3] = { cellColors[i], cellColors[i+1], cellColors[i+2] };
-					if (ImGui::ColorPicker("Cell Color", colors)) {
-						cellColors[i+0] = colors[0];
-						cellColors[i+1] = colors[1];
-						cellColors[i+2] = colors[2];
-						automata->colors = cellColors;
-						mesh = renderer->render(automata);
-					}
-				}
-			}
-
-			ImGui::End();
-		}
-
-		if (ImGui::Begin("Simulation Stats")) {
-
-			if (!unlocked)
-				ImGui::Text("Simulation Speed: %i", simulationSpeed);
-			else
-				ImGui::Text("Simulation Speed: Unlocked");
-
-			ImGui::Text("Current Rule: %s", rules.rule.c_str());
-			ImGui::Text("Delta Time: %f", delta);
-
-			ImGui::Text("Current Width: %i", automata->getWidth());
-			ImGui::Text("Current Height: %i", automata->getHeight());
-			ImGui::Text("Current Depth: %i", automata->getDepth());
-			ImGui::Text("Current Volume: %i", automata->getWidth() * automata->getHeight() * automata->getDepth());
-
-			ImGui::End();
-		}
-
-		if (ImGui::Begin("Simulation Settings")) {
-
-			if (ImGui::InputFloat("Movement Speed", &movementSpeed)) {
-				if (movementSpeed < 1)
-					movementSpeed = 1;
-			}
-
-			if (ImGui::InputInt("Threads", &CellularAutomata::threadCount)) {
-				if (CellularAutomata::threadCount < 0)
-					CellularAutomata::threadCount = 1;
-				automata->updateThreads();
-			}
-
-			if (ImGui::InputInt("Speed", &simulationSpeed)) {
-				if (simulationSpeed < 0)
-					simulationSpeed = 1;
-			}
-
-			ImGui::Checkbox("Unlocked", &unlocked);
-
-			if (ImGui::Button(paused ? "Unpause" : "Pause")) {
-				paused = !paused;
-			}
-
-			if (paused) {
-				if (ImGui::Button("Next Frame")) {
-					time = 1;
-				}
-			}
-
-			ImGui::Checkbox("Wrap", &automata->wrap);
-
-			ImGui::End();
-		}
-
-		if (ImGui::Begin("Automata Settings")) {
-			ImGui::InputText("Rule", rule, 512);
-
-			if (ImGui::InputInt("Width", &width)) {
-				if (width < 0)
-					width = 1;
-			}
-
-			if (ImGui::InputInt("Height", &height)) {
-				if (height < 0)
-					height = 1;
-			}
-
-			if (ImGui::InputInt("Depth", &depth)) {
-				if (depth < 0)
-					depth = 1;
-			}
-
-			ImGui::Checkbox("Cube", &cube);
-
-			if (ImGui::InputInt("Cube Size", &cubeSize)) {
-				if (cubeSize < 0)
-					cubeSize = 1;
-			}
-
-			if (ImGui::Button("Restart")) {
-				if (generate_rule(rule, &rules)) {
-					if (cellColors.size() / 3 != rules.states) {
-						cellColors.clear();
-						for (size_t i = 1; i <= rules.states; i++)
-						{
-							cellColors.push_back(i / (float)rules.states);
-							cellColors.push_back(i / (float)rules.states);
-							cellColors.push_back(i / (float)rules.states);
+			if (ImGui::Begin("Color")) {
+				for (size_t i = 0; i < rules.states * 3; i += 3)
+				{
+					if (ImGui::CollapsingHeader(("State: " + std::to_string(i / 3)).c_str())) {
+						float colors[3] = { cellColors[i], cellColors[i + 1], cellColors[i + 2] };
+						if (ImGui::ColorPicker("Cell Color", colors)) {
+							cellColors[i + 0] = colors[0];
+							cellColors[i + 1] = colors[1];
+							cellColors[i + 2] = colors[2];
+							automata->colors = cellColors;
+							mesh = renderer->render(automata);
 						}
 					}
-					automata = new CellularAutomata(width, height, depth, cellColors, rules, cube, cubeSize);
-					mesh = renderer->render(automata);
-					time = 0;
-
-					camera->position = vec3(width / 2.f, height / 2.f, depth * 2.f);
-					camera->rotation = glm::mat4(1.f);
-					camera->updateVectors();
 				}
-			}
 
+			}
 			ImGui::End();
-		}
+
+			if (ImGui::Begin("Simulation Stats")) {
+
+				if (!unlocked)
+					ImGui::Text("Simulation Speed: %i", simulationSpeed);
+				else
+					ImGui::Text("Simulation Speed: Unlocked");
+
+				ImGui::Text("Current Rule: %s", rules.rule.c_str());
+				ImGui::Text("Delta Time: %f", delta);
+
+				ImGui::Text("Current Width: %i", automata->getWidth());
+				ImGui::Text("Current Height: %i", automata->getHeight());
+				ImGui::Text("Current Depth: %i", automata->getDepth());
+				ImGui::Text("Current Volume: %i", automata->getWidth() * automata->getHeight() * automata->getDepth());
+
+			}
+			ImGui::End();
+
+			if (ImGui::Begin("Simulation Settings")) {
+
+				if (ImGui::InputFloat("Movement Speed", &movementSpeed)) {
+					if (movementSpeed < 1)
+						movementSpeed = 1;
+				}
+
+				if (ImGui::InputInt("Threads", &CellularAutomata::threadCount)) {
+					if (CellularAutomata::threadCount < 0)
+						CellularAutomata::threadCount = 1;
+					automata->updateThreads();
+				}
+
+				if (ImGui::InputInt("Speed", &simulationSpeed)) {
+					if (simulationSpeed < 0)
+						simulationSpeed = 1;
+				}
+
+				ImGui::Checkbox("Unlocked", &unlocked);
+
+				if (ImGui::Button(paused ? "Unpause" : "Pause")) {
+					paused = !paused;
+				}
+
+				if (paused) {
+					if (ImGui::Button("Next Frame")) {
+						time = 1;
+					}
+				}
+
+				ImGui::Checkbox("Wrap", &automata->wrap);
+
+			}
+			ImGui::End();
+
+			if (ImGui::Begin("Automata Settings")) {
+				ImGui::InputText("Rule", rule, 512);
+
+				if (ImGui::InputInt("Width", &width)) {
+					if (width < 0)
+						width = 1;
+				}
+
+				if (ImGui::InputInt("Height", &height)) {
+					if (height < 0)
+						height = 1;
+				}
+
+				if (ImGui::InputInt("Depth", &depth)) {
+					if (depth < 0)
+						depth = 1;
+				}
+
+				ImGui::Checkbox("Cube", &cube);
+
+				if (ImGui::InputInt("Cube Size", &cubeSize)) {
+					if (cubeSize < 0)
+						cubeSize = 1;
+				}
+
+				if (ImGui::Button("Restart")) {
+					if (generate_rule(rule, &rules)) {
+						if (cellColors.size() / 3 != rules.states) {
+							cellColors.clear();
+							for (size_t i = 1; i <= rules.states; i++)
+							{
+								cellColors.push_back(i / (float)rules.states);
+								cellColors.push_back(i / (float)rules.states);
+								cellColors.push_back(i / (float)rules.states);
+							}
+						}
+						automata = new CellularAutomata(width, height, depth, cellColors, rules, cube, cubeSize);
+						mesh = renderer->render(automata);
+						time = 0;
+
+						camera->position = vec3(width / 2.f, height / 2.f, depth * 2.f);
+						camera->rotation = glm::mat4(1.f);
+						camera->updateVectors();
+					}
+				}
+
+			}
+			ImGui::End();
 
 		shader->use();
 		shader->uniformMatrix("proj", camera->getProjection());
@@ -277,39 +277,39 @@ int main() {
 		mesh->draw(GL_TRIANGLES);
 
 		linesShader->use();
-		linesShader->uniformMatrix("proj", camera->getProjection()* camera->getView());
+		linesShader->uniformMatrix("proj", camera->getProjection() * camera->getView());
 		glLineWidth(2.f);
 
 		{
 			int lineWidth = automata->getWidth();
 			int lineHeight = automata->getHeight();
 			int lineDepth = automata->getDepth();
-			lineBatch->line(0, 0, 0,					0, lineHeight, 0,					0, 1, 0, 1);
-			lineBatch->line(lineWidth, 0, 0,			lineWidth, lineHeight, 0,			0, 1, 0, 1);
-			lineBatch->line(0, 0, lineDepth,			0, lineHeight, lineDepth,			0, 1, 0, 1);
-			lineBatch->line(lineWidth, 0, lineDepth,	lineWidth, lineHeight, lineDepth,	0, 1, 0, 1);
+			lineBatch->line(0, 0, 0, 0, lineHeight, 0, 0, 1, 0, 1);
+			lineBatch->line(lineWidth, 0, 0, lineWidth, lineHeight, 0, 0, 1, 0, 1);
+			lineBatch->line(0, 0, lineDepth, 0, lineHeight, lineDepth, 0, 1, 0, 1);
+			lineBatch->line(lineWidth, 0, lineDepth, lineWidth, lineHeight, lineDepth, 0, 1, 0, 1);
 
-			lineBatch->line(lineWidth, lineHeight, 0,	lineWidth, lineHeight, lineDepth,	0, 1, 0, 1);
-			lineBatch->line(0, lineHeight, 0,			0, lineHeight, lineDepth,			0, 1, 0, 1);
-			lineBatch->line(0, lineHeight, lineDepth,	lineWidth, lineHeight, lineDepth,	0, 1, 0, 1);
-			lineBatch->line(0, lineHeight, 0,			lineWidth, lineHeight, 0,			0, 1, 0, 1);
+			lineBatch->line(lineWidth, lineHeight, 0, lineWidth, lineHeight, lineDepth, 0, 1, 0, 1);
+			lineBatch->line(0, lineHeight, 0, 0, lineHeight, lineDepth, 0, 1, 0, 1);
+			lineBatch->line(0, lineHeight, lineDepth, lineWidth, lineHeight, lineDepth, 0, 1, 0, 1);
+			lineBatch->line(0, lineHeight, 0, lineWidth, lineHeight, 0, 0, 1, 0, 1);
 
-			lineBatch->line(lineWidth, 0, 0,			lineWidth, 0, lineDepth,			0, 1, 0, 1);
-			lineBatch->line(0, 0, 0,					0, 0, lineDepth,					0, 1, 0, 1);
-			lineBatch->line(0, 0, lineDepth,			lineWidth, 0, lineDepth,			0, 1, 0, 1);
-			lineBatch->line(0, 0, 0,					lineWidth, 0, 0,					0, 1, 0, 1);
+			lineBatch->line(lineWidth, 0, 0, lineWidth, 0, lineDepth, 0, 1, 0, 1);
+			lineBatch->line(0, 0, 0, 0, 0, lineDepth, 0, 1, 0, 1);
+			lineBatch->line(0, 0, lineDepth, lineWidth, 0, lineDepth, 0, 1, 0, 1);
+			lineBatch->line(0, 0, 0, lineWidth, 0, 0, 0, 1, 0, 1);
 		}
 
 		lineBatch->render();
 
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		Window::swapBuffers();
 		Events::pollEvents();
 
-		if(!paused)
-		time += delta;
+		if (!paused)
+			time += delta;
 	}
 
 	delete automata;
