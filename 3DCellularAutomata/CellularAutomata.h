@@ -6,6 +6,7 @@ using namespace glm;
 
 #include "CellularRules.hpp"
 #include "NeighbourhoodMode.h"
+#include <thread>
 
 class CellularAutomata {
 public:
@@ -22,6 +23,8 @@ public:
 	int getDepth();
 	vec3 cellColor;
 	CellularRules rules;
+
+	static int threadCount;
 private:
 	int* cells;
 	int* calculateCells;
@@ -29,8 +32,13 @@ private:
 	int width, height, depth;
 
 	void simulateCell(int x, int y, int z);
+	void simulateThread(int start, int end);
 
 	int getNeighbourCount(int x, int y, int z);
+
+	std::thread* threads;
+
+	std::vector<int> linesDepth;
 
 };
 

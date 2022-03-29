@@ -1,5 +1,7 @@
 #include "CellularAutomata.h"
 
+int CellularAutomata::threadCount = 11;
+
 CellularAutomata::CellularAutomata(int width, int height, int depth, vec3 color, CellularRules rules):width(width), height(height), depth(depth), cellColor(color), rules(rules)
 {
 	cells = new int[width * height * depth];
@@ -43,19 +45,27 @@ CellularAutomata::CellularAutomata(int width, int height, int depth, vec3 color,
 CellularAutomata::~CellularAutomata()
 {
 	delete[] cells;
+	delete[] calculateCells;
+	delete[] threads;
 }
 
 void CellularAutomata::simulate()
 {
-	for (size_t x = 0; x < width; x++)
+	linesDepth = std::vector<int>();
+	for (size_t i = 0; i < depth; i++)
 	{
-		for (size_t y = 0; y < height; y++)
-		{
-			for (size_t z = 0; z < depth; z++)
-			{
-				simulateCell(x, y, z);
-			}
-		}
+		linesDepth.push_back(i);
+	}
+
+	threads = new std::thread[threadCount];
+	for (size_t i = 0; i < threadCount; i++)
+	{
+		threads[i] = std::thread(&CellularAutomata::simulateThread, this, floor(height*(i/threadCount)), floor(height * ((i+1) / threadCount)));
+	}
+
+	for (size_t i = 0; i < threadCount; i++)
+	{
+		threads[i].join();
 	}
 
 	memcpy(cells, calculateCells, width * height * depth * sizeof(int));
@@ -133,6 +143,28 @@ void CellularAutomata::simulateCell(int x, int y, int z)
 			cell = rules.states;
 		}
 	}
+}
+
+void CellularAutomata::simulateThread(int start, int end)
+{
+	/*while (linesDepth.size() > 0) {
+		if (linesDepth.size() <= 0)
+			break;
+		int line = linesDepth.back();
+		if (linesDepth.size() <= 0)
+			break;
+		linesDepth.pop_back();*/
+
+	for (size_t y = start; y < end; y++) {
+		for (size_t x = 0; x < width; x++)
+		{
+			for (size_t z = 0; z < depth; z++)
+			{
+				simulateCell(x, y, z);
+			}
+		}
+	}
+	//}
 }
 
 int CellularAutomata::getNeighbourCount(int x, int y, int z)

@@ -25,9 +25,9 @@ int main() {
 
 	Shader* shader = load_shader("res/main.vs", "res/main.fs");
 
-	int width = 30;
-	int height = 30;
-	int depth = 30;
+	int width = 80;
+	int height = 80;
+	int depth = 80;
 
 	Camera* camera = new Camera(glm::vec3(width/2.f, height/2.f, depth * 2.f), glm::radians(60.f));
 
