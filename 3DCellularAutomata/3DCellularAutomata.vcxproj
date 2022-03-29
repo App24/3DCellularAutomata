@@ -153,10 +153,12 @@
   <ItemGroup>
     <ClCompile Include="CellularAutomata.cpp" />
     <ClCompile Include="CellularRules.cpp" />
+    <ClCompile Include="graphics\LineBatch.cpp" />
     <ClCompile Include="graphics\Mesh.cpp" />
     <ClCompile Include="graphics\Shader.cpp" />
     <ClCompile Include="graphics\VoxelRenderer.cpp" />
     <ClCompile Include="graphics\VoxelRenderer.h" />
+    <ClCompile Include="imguiExtra.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -172,8 +174,10 @@
   <ItemGroup>
     <ClInclude Include="CellularAutomata.h" />
     <ClInclude Include="CellularRules.hpp" />
+    <ClInclude Include="graphics\LineBatch.h" />
     <ClInclude Include="graphics\Mesh.h" />
     <ClInclude Include="graphics\Shader.h" />
+    <ClInclude Include="imguiExtra.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_glfw.h" />

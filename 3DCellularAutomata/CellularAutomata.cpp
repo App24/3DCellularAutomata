@@ -2,7 +2,7 @@
 
 int CellularAutomata::threadCount = 11;
 
-CellularAutomata::CellularAutomata(int width, int height, int depth, vec3 color, CellularRules rules):width(width), height(height), depth(depth), cellColor(color), rules(rules)
+CellularAutomata::CellularAutomata(int width, int height, int depth, std::vector<float> colors, CellularRules rules, bool cube, int cubeSize):width(width), height(height), depth(depth), colors(colors), rules(rules), wrap(true)
 {
 	cells = new int[width * height * depth];
 	calculateCells = new int[width * height * depth];
@@ -13,13 +13,14 @@ CellularAutomata::CellularAutomata(int width, int height, int depth, vec3 color,
 	int midY = height / 2;
 	int midZ = height / 2;
 
-	int radius = 10;
+	cells[(midY * depth + midZ) * width + midX] = rules.states;
 
-	for (int x = -radius; x <= radius; x++)
+	if(cube)
+	for (int x = -cubeSize; x <= cubeSize; x++)
 	{
-		for (int y = -radius; y <= radius; y++)
+		for (int y = -cubeSize; y <= cubeSize; y++)
 		{
-			for (int z = -radius; z <= radius; z++)
+			for (int z = -cubeSize; z <= cubeSize; z++)
 			{
 				if (rand() % 2 == 0) {
 					cells[((y + midY) * depth + (z + midZ)) * width + (midX + x)] = rules.states;
@@ -40,6 +41,8 @@ CellularAutomata::CellularAutomata(int width, int height, int depth, vec3 color,
 		}
 	}*/
 	memcpy(calculateCells, cells, width* height* depth * sizeof(int));
+
+	threads = new std::thread[threadCount];
 }
 
 CellularAutomata::~CellularAutomata()
@@ -51,22 +54,18 @@ CellularAutomata::~CellularAutomata()
 
 void CellularAutomata::simulate()
 {
-	linesDepth = std::vector<int>();
+	/*linesDepth = std::vector<int>();
 	for (size_t i = 0; i < depth; i++)
 	{
 		linesDepth.push_back(i);
-	}
+	}*/
 
-	threads = new std::thread[threadCount];
 	for (size_t i = 0; i < threadCount; i++)
 	{
 		threads[i] = std::thread(&CellularAutomata::simulateThread, this, floor(height*(i/threadCount)), floor(height * ((i+1) / threadCount)));
-	}
-
-	for (size_t i = 0; i < threadCount; i++)
-	{
 		threads[i].join();
 	}
+
 
 	memcpy(cells, calculateCells, width * height * depth * sizeof(int));
 }
@@ -80,31 +79,37 @@ bool CellularAutomata::isCell(int x, int y, int z)
 
 int CellularAutomata::getCell(int x, int y, int z)
 {
-	while (x < 0)
-	{
-		x += width;
-	}
+	if (wrap) {
+		while (x < 0)
+		{
+			x += width;
+		}
 
-	while (y < 0)
-	{
-		y += height;
-	}
+		while (y < 0)
+		{
+			y += height;
+		}
 
-	while (z < 0)
-	{
-		z += depth;
-	}
+		while (z < 0)
+		{
+			z += depth;
+		}
 
-	while (x >= width) {
-		x -= width;
-	}
+		while (x >= width) {
+			x -= width;
+		}
 
-	while (y >= height) {
-		y -= height;
-	}
+		while (y >= height) {
+			y -= height;
+		}
 
-	while (z >= depth) {
-		z -= depth;
+		while (z >= depth) {
+			z -= depth;
+		}
+	}
+	else {
+		if (x < 0 || y < 0 || z < 0 || x >= width || y >= height || z >= depth)
+			return 0;
 	}
 	return cells[(y * depth + z) * width + x];
 }
@@ -122,6 +127,11 @@ int CellularAutomata::getHeight()
 int CellularAutomata::getDepth()
 {
 	return depth;
+}
+
+void CellularAutomata::updateThreads()
+{
+	threads = new std::thread[threadCount];
 }
 
 void CellularAutomata::simulateCell(int x, int y, int z)

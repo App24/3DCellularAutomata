@@ -1,6 +1,4 @@
 #include "VoxelRenderer.h"
-#include "Mesh.h"
-#include "../CellularAutomata.h"
 #include <iostream>
 #include <GL/glew.h>
 
@@ -9,9 +7,9 @@
 #define VERTEX(INDEX, X,Y,Z, LIGHT) buffer[INDEX+0] = (X);\
 								  buffer[INDEX+1] = (Y);\
 								  buffer[INDEX+2] = (Z);\
-								  buffer[INDEX+3] = automata->cellColor.x*cell/(float)automata->rules.states;\
-								  buffer[INDEX+4] = automata->cellColor.y*cell/(float)automata->rules.states;\
-								  buffer[INDEX+5] = automata->cellColor.z*cell/(float)automata->rules.states;\
+								  buffer[INDEX+3] = automata->colors[cellIndex+0];\
+								  buffer[INDEX+4] = automata->colors[cellIndex+1];\
+								  buffer[INDEX+5] = automata->colors[cellIndex+2];\
 								  buffer[INDEX+6] = (LIGHT);\
 								  INDEX += VERTEX_SIZE;
 
@@ -30,6 +28,8 @@ inline void _renderBlock(float* buffer, int x, int y, int z, CellularAutomata* a
 
 	if (!cell)
 		return;
+
+	int cellIndex = (cell-1) * 3;
 
 	if (!automata->isCell(x, y + 1, z)) {
 		VERTEX(index, x - 0.5f, y + 0.5f, z - 0.5f, 0.8f);

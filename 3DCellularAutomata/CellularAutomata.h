@@ -10,7 +10,7 @@ using namespace glm;
 
 class CellularAutomata {
 public:
-	CellularAutomata(int width, int height, int depth, vec3 color, CellularRules rules);
+	CellularAutomata(int width, int height, int depth, std::vector<float> colors, CellularRules rules, bool cube, int cubeSize);
 	~CellularAutomata();
 
 	void simulate();
@@ -21,10 +21,13 @@ public:
 	int getWidth();
 	int getHeight();
 	int getDepth();
-	vec3 cellColor;
+	std::vector<float> colors;
 	CellularRules rules;
+	bool wrap;
 
 	static int threadCount;
+
+	void updateThreads();
 private:
 	int* cells;
 	int* calculateCells;

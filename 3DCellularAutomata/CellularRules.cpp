@@ -109,7 +109,7 @@ bool generate_rule(std::string rule, CellularRules* automataRules)
 	}
 
 	try {
-		automataRules->states = std::stoi(statesString);
+		automataRules->states = std::stoi(statesString) - 1;
 	}
 	catch(...) {
 		return false;

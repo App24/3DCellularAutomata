@@ -1,9 +1,8 @@
 #pragma once
 
 #include <stdlib.h>
-
-class Mesh;
-class CellularAutomata;
+#include "../CellularAutomata.h"
+#include "Mesh.h"
 
 class VoxelRenderer {
 	float* buffer;
